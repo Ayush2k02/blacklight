@@ -13,7 +13,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: ["http://localhost:3000"],
+    origin: ["http://localhost:4200"],
   })
 );
 
@@ -90,33 +90,26 @@ const handleLastWeekLeaderboardByCountry = async (req, res) => {
 };
 const handleUserLeaderboardRank = async (req, res) => {
   const uid = req.body.uid;
-  const startOfWeek = new Date();
-  startOfWeek.setHours(0, 0, 0, 0);
-  startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
-
-  const endOfWeek = new Date(startOfWeek);
-  endOfWeek.setDate(startOfWeek.getDate() + 7);
-
+  if (uid === "") return res.status(200).send({ success: true, data: [] });
   User.aggregate([
-    {
-      $match: {
-        timestamp: {
-          $gte: startOfWeek,
-          $lt: endOfWeek,
-        },
-      },
-    },
     {
       $sort: { score: -1 },
     },
   ])
     .then((result) => {
-      const userIndex = result.findIndex((user) => user.uid === uid);
-      if (userIndex == -1) {
-        return res.status(200).send({ success: true, message: `user with uid ${uid} not found` });
-      } else {
-        return res.status(200).send({ success: true, rank: userIndex + 1, data: result[userIndex] });
-      }
+      const resultsStartingWithUid = result
+        .map((user, index) => {
+          if (user.uid.startsWith(uid)) {
+            return {
+              ...user,
+              rank: index + 1,
+            };
+          }
+        })
+        .filter((user) => user !== undefined);
+      return res
+        .status(200)
+        .send({ success: true, data: resultsStartingWithUid });
     })
     .catch((error) => {
       return res.status(200).send({ success: false, error });
@@ -125,8 +118,11 @@ const handleUserLeaderboardRank = async (req, res) => {
 
 //Routes
 app.get("/currentWeekLeaderboard", tryCatch(handleCurrentWeekLeaderboard));
-app.get("/lastWeekLeaderboardByCountry", tryCatch(handleLastWeekLeaderboardByCountry));
-app.get("/userLeaderboardRank", tryCatch(handleUserLeaderboardRank));
+app.post(
+  "/lastWeekLeaderboardByCountry",
+  tryCatch(handleLastWeekLeaderboardByCountry)
+);
+app.post("/userLeaderboardRank", tryCatch(handleUserLeaderboardRank));
 app.get("/populate", tryCatch(populate));
 
 // Error handler
