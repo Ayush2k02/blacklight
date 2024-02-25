@@ -24,12 +24,8 @@ const populate = async (req, res) => {
   return res.status(200).send({ success: true });
 };
 const handleCurrentWeekLeaderboard = async (req, res) => {
-  const startOfWeek = new Date();
-  startOfWeek.setHours(0, 0, 0, 0);
-  startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
-
-  const endOfWeek = new Date(startOfWeek);
-  endOfWeek.setDate(startOfWeek.getDate() + 7);
+  const startOfWeek = new Date("2024-02-19");
+  const endOfWeek = new Date("2024-02-26");
 
   User.aggregate([
     {
@@ -57,12 +53,8 @@ const handleCurrentWeekLeaderboard = async (req, res) => {
 
 const handleLastWeekLeaderboardByCountry = async (req, res) => {
   const country = req.body.country;
-  const startOfWeek = new Date();
-  startOfWeek.setHours(0, 0, 0, 0);
-  startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
-
-  const endOfWeek = new Date(startOfWeek);
-  endOfWeek.setDate(startOfWeek.getDate() + 7);
+  const startOfWeek = new Date("2024-02-12");
+  const endOfWeek = new Date("2024-02-18");
 
   User.aggregate([
     {
@@ -71,7 +63,7 @@ const handleLastWeekLeaderboardByCountry = async (req, res) => {
           $gte: startOfWeek,
           $lt: endOfWeek,
         },
-        country: country,
+        country: { $regex: `^${country}`, $options: "i" },
       },
     },
     {
@@ -90,7 +82,6 @@ const handleLastWeekLeaderboardByCountry = async (req, res) => {
 };
 const handleUserLeaderboardRank = async (req, res) => {
   const uid = req.body.uid;
-  if (uid === "") return res.status(200).send({ success: true, data: [] });
   User.aggregate([
     {
       $sort: { score: -1 },
@@ -106,7 +97,8 @@ const handleUserLeaderboardRank = async (req, res) => {
             };
           }
         })
-        .filter((user) => user !== undefined);
+        .filter((user) => user !== undefined)
+        .slice(0, 200);
       return res
         .status(200)
         .send({ success: true, data: resultsStartingWithUid });

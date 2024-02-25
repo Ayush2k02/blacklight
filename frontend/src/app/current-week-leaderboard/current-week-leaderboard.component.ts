@@ -15,11 +15,31 @@ export class CurrentWeekLeaderboardComponent implements OnInit {
   constructor(private dataService: DataService) {}
 
   ngOnInit() {
-    this.dataService.getData().subscribe((data) => {
+    this.dataService.getCurrentWeekLeaderboardData().subscribe((data) => {
       this.data = data['result' as keyof object];
     });
   }
-  stringify(item: any): string {
-    return JSON.stringify(item, null, 2); // 2 is for indentation
+  formatTimestamp(timestamp: string) {
+    const date = new Date(timestamp);
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+    const day = ('0' + date.getDate()).slice(-2);
+    const monthAbbrev = months[date.getMonth()];
+    const year = date.getFullYear();
+
+    const formattedDate = `${day} ${monthAbbrev} ${year}`;
+    return formattedDate;
   }
 }
