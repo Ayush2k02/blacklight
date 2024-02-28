@@ -51,3 +51,7 @@ Follow these steps to run the project:
 Now, the project is ready to be accessed and used.
 
 Feel free to explore the various leaderboards and user rank functionalities provided by the project.
+
+### screenshots
+
+[screenshots of current week leaderboard](./screenshots/country leaderboard.png)
