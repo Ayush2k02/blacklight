@@ -54,4 +54,6 @@ Feel free to explore the various leaderboards and user rank functionalities prov
 
 ### screenshots
 
-[screenshots of current week leaderboard](./screenshots/countryLeaderboard.png)
+[screenshots of current week leaderboard](./screenshots/coutryLeaderboard.png)
+[screenshots of past week leaderboard sorted with countries](./screenshots/globalLeaderboard.png)
+[screenshots of past week leaderboard sorted with countries](./rank.png)
