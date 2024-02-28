@@ -9,16 +9,24 @@ export class DataService {
   constructor(private http: HttpClient) {}
 
   getCurrentWeekLeaderboardData() {
-    return this.http.get<any[]>('http://localhost:5000/currentWeekLeaderboard');
+    return this.http.get<any[]>(
+      'https://blacklight-assignment-jwtj.onrender.com/currentWeekLeaderboard'
+    );
   }
-  
+
   getLastWeekLeaderboardData(countryCode: string): Observable<any[]> {
     const body = { country: countryCode };
-    return this.http.post<any[]>('http://localhost:5000/lastWeekLeaderboardByCountry', body);
+    return this.http.post<any[]>(
+      'https://blacklight-assignment-jwtj.onrender.com/lastWeekLeaderboardByCountry',
+      body
+    );
   }
 
   getUserFromUid(uid: string): Observable<any[]> {
     const body = { uid: uid };
-    return this.http.post<any[]>('http://localhost:5000/userLeaderboardRank', body);
+    return this.http.post<any[]>(
+      'https://blacklight-assignment-jwtj.onrender.com/userLeaderboardRank',
+      body
+    );
   }
 }

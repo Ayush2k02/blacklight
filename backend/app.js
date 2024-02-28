@@ -13,11 +13,20 @@ const app = express();
 
 app.use(
   cors({
-    origin: ["http://localhost:4200"],
+    origin: [
+      "https://blacklight-assignment.netlify.app",
+      "http://localhost:4200",
+    ],
   })
 );
 
 app.use(bodyParser.json());
+
+setInterval(async () => {
+  fetch("https://blacklight-assignment-jwtj.onrender.com/heartbeat")
+    .then((res) => res.json())
+    .then((data) => console.log(data));
+}, 10 * 60 * 1000);
 
 const populate = async (req, res) => {
   populateDatabase(10000);
@@ -108,6 +117,10 @@ const handleUserLeaderboardRank = async (req, res) => {
     });
 };
 
+const checkHeartBeat = (req, res) => {
+  res.status(200).json({ succes: true });
+};
+
 //Routes
 app.get("/currentWeekLeaderboard", tryCatch(handleCurrentWeekLeaderboard));
 app.post(
@@ -116,6 +129,7 @@ app.post(
 );
 app.post("/userLeaderboardRank", tryCatch(handleUserLeaderboardRank));
 app.get("/populate", tryCatch(populate));
+app.get("/heartbeat", tryCatch(checkHeartBeat));
 
 // Error handler
 app.use(errorHandler);
